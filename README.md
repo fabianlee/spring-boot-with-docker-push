@@ -3,6 +3,8 @@
 Minimal Spring Boot project that shows how to use gradle and Palantir plugins
 to create OCI-compatible (Docker) image.
 
+Is instrumented with Actuator and documented using OpenDocs/Swagger.
+
 Full blog: https://fabianlee.org/2022/06/30/java-creating-docker-images-for-spring-boot-web-apps-using-gradle/
 
 ## Project initially created using Spring Intializer
