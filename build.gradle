@@ -1,0 +1,69 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+        id 'com.palantir.docker' version '0.33.0'
+        id "com.palantir.docker-run" version "0.33.0"
+}
+
+group = 'org.fabianlee'
+version = '0.0.2-SNAPSHOT'
+sourceCompatibility = '11'
+
+targetCompatibility = '11'
+def dockerOwner = 'fabianlee'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+        runtimeOnly 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+        implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+// makes BuildProperties available from Spring context
+springBoot {
+    buildInfo()
+}
+
+// takes templatized Dockerfile, places into buildDir
+task prepareDockerfileTemplate(type: Copy) {
+    from "src/main/resources/docker"
+    include "Dockerfile"
+    filter { it.replaceAll('<%=name%>', project.name) }
+    filter { it.replaceAll('<%=version%>', project.version) }
+    into "$buildDir"
+}
+// add explicit dependencies, otherwise we get warning at console
+dockerPrepare.dependsOn bootJar
+bootJar.dependsOn prepareDockerfileTemplate
+bootJarMainClassName.dependsOn prepareDockerfileTemplate
+bootRunMainClassName.dependsOn prepareDockerfileTemplate
+
+// https://plugins.gradle.org/plugin/com.palantir.docker
+docker {
+    name "${dockerOwner}/${project.name}:${project.version}"
+        files "$buildDir/libs/${project.name}-${project.version}.jar"
+    dockerfile file("$buildDir/Dockerfile")
+}
+
+// https://plugins.gradle.org/plugin/com.palantir.docker-run
+dockerRun {
+    name "${project.name}"
+    image "${dockerOwner}/${project.name}:${project.version}"
+    ports '8080:8080','8081:8081'
+    clean true
+        daemonize false
+}
+
