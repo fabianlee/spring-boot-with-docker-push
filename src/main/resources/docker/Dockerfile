@@ -12,7 +12,7 @@ RUN DEBIAN_FRONTEND=noninteractive && \
 # run as non-root
 USER spring:spring
 
-# main service and OpenDocs /swagger-ui/index.html
+# main REST service and OpenAPI /swagger-ui/index.html
 EXPOSE 8080
 # actuator metrics /actuator/health, /actuator/prometheus
 EXPOSE 8081

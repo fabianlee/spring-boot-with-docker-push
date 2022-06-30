@@ -5,7 +5,7 @@ to create OCI-compatible (Docker) image.
 
 Is instrumented with Actuator and documented using OpenDocs/Swagger.
 
-Full blog: https://fabianlee.org/2022/06/30/kubernetes-liveness-probe-for-spring-boot-with-custom-actuator-health-check/
+Full blog: https://fabianlee.org/2022/06/30/java-creating-docker-image-for-spring-boot-web-app-using-gradle/
 
 ## Project initially created using Spring Intializer
 
