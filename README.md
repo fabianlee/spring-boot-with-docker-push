@@ -3,6 +3,8 @@
 Minimal Spring Boot project that shows how to use gradle and Palantir plugins
 to create OCI-compatible (Docker) image.
 
+Full blog: https://fabianlee.org/2022/06/30/java-creating-docker-images-for-spring-boot-web-apps-using-gradle/
+
 ## Project initially created using Spring Intializer
 
 [Spring Initializer Web UI](https://start.spring.io/)
@@ -13,6 +15,7 @@ artifact_id="${id//-}"
 SpringAppClassName=SpringMain
 version="0.0.2-SNAPSHOT"
 groupId="org.fabianlee"
+
 curl https://start.spring.io/starter.zip \
     -d type=gradle-project \
     -d dependencies=web,prometheus,devtools,actuator \
@@ -29,3 +32,5 @@ unzip $id.zip
 cd $id
 chmod +x ./gradlew
 ```
+
+
