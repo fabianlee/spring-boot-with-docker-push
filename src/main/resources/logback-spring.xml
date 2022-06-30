@@ -10,7 +10,7 @@
         <appender-ref ref="stdout"/>
     </root>
 
-    <logger name="org.fabianlee.springbootwithdockerpush" level="debug" additivity="false">
+    <logger name="org.fabianlee.springbootwithdockerpush" level="info" additivity="false">
         <appender-ref ref="stdout" />
     </logger>
 
