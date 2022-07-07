@@ -54,7 +54,7 @@ bootRunMainClassName.dependsOn prepareDockerfileTemplate
 // https://plugins.gradle.org/plugin/com.palantir.docker
 docker {
     name "${dockerOwner}/${project.name}:${project.version}"
-        files "$buildDir/libs/${project.name}-${project.version}.jar"
+    files "$buildDir/libs/${project.name}-${project.version}.jar"
     dockerfile file("$buildDir/Dockerfile")
 }
 
@@ -65,5 +65,34 @@ dockerRun {
     ports '8080:8080','8081:8081'
     clean true
         daemonize false
+}
+
+
+task prepareKubectl(type: Copy) {
+    from "src/main/resources/kubernetes"
+    include "*"
+    filter { it.replaceAll('<%=version%>', project.version) }
+    into "$buildDir/kubernetes"
+}
+task kubectlApplyDeployment(type: Exec) {
+     group "kubernetes"
+     description "apply deployment and service"
+     dependsOn prepareKubectl
+     workingDir "$buildDir/kubernetes"
+     commandLine "kubectl", "apply", "-f", "deployment-and-service.yaml"
+}
+task kubectlApplyIngress(type: Exec) {
+     group "kubernetes"
+     description "apply Ingress making service public"
+     dependsOn prepareKubectl
+     workingDir "$buildDir/kubernetes"
+     commandLine "kubectl", "apply", "-f", "ingress.yaml"
+}
+task kubectlApplyServiceMonitor(type: Exec) {
+     group "kubernetes"
+     description "apply ServiceMonitor that enables prometheus monitoring"
+     dependsOn prepareKubectl
+     workingDir "$buildDir/kubernetes"
+     commandLine "kubectl", "apply", "-f", "servicemonitor.yaml"
 }
 

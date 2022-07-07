@@ -1,0 +1,26 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    # specified as matchLabel in 'Prometheus' CRD
+    # this ServiceMonitor will not be found by prometheus unless it matches
+    release: prom-stack
+  name: spring-boot-with-docker-push
+  # does not need to be in 'prom' namespace, works fine in default
+  namespace: default
+spec:
+  endpoints:
+
+  # main Java Actuator metrics enabled by adding 'spring-boot-starter-actuator' dependency to Spring Boot
+  - path: /actuator/prometheus
+    port: http-actuator-metrics
+    scheme: http
+    interval: 60s
+
+  jobLabel: spring-boot-with-docker-push
+  namespaceSelector:
+    matchNames:
+    - default
+  selector:
+    matchLabels:
+      app: spring-boot-with-docker-push
