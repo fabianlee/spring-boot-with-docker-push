@@ -1,5 +1,4 @@
 # need to set 'ruleSelectorNilUsesHelmValues' in helm chart to false so helm annotations and labels not necessary
-# examples: https://alex.dzyoba.com/blog/prometheus-alerts/
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
@@ -10,13 +9,12 @@ spec:
   - name: spring-boot-with-docker-push.rules
     rules:
 
-    # exposed at /prometheus
-    - alert: LowUsers
+    # metric exposed at /prometheus
+    - alert: LowUserCount
       annotations:
-        description: on {{ $externalLabels.cluster }}, only {{ $value }} users remain
+        description: on {{ $externalLabels.cluster }}, only {{ $value }} users left
         remediation: login to {{ $externalLabels.env }} cluster {{ $externalLabels.cluster }} using jumpbox {{ $externalLabels.jumpbox }} and provision more Users
-      # do not specify job so that all sources are considered
       expr: usercontroller_usercount{}<2
-      for: 10s # 1m
+      for: 15s # 1m
       labels:
         severity: critical
