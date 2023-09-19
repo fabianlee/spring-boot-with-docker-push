@@ -57,8 +57,14 @@ jobs:
   
       - name: Validate Gradle wrapper matches official SHA-256 checksums for security
         uses: gradle/wrapper-validation-action@v1
+
+      - name: get BUILD_VERSION out of build.gradle
+        shell: bash
+        run: echo BUILD_VERSION=$(grep -Po '^version = \K.*' build.gradle | tr -d "'") >> $GITHUB_ENV
+      - name: show BUILD_VERSION
+        run: echo $BUILD_VERSION
   
-      - name: Creates build/libs/springbootwithdockerpush-x.y.z-SNAPSHOT.jar
+      - name: Creates build/libs/springbootwithdockerpush-${{ BUILD_VERSION }}-SNAPSHOT.jar
         run: ./gradlew bootJar
 
       - name: Create Dockerfile at build/docker/Dockerfile referencing exact jar version
@@ -92,7 +98,7 @@ jobs:
         uses: docker/build-push-action@v3.2.0
         with:
           context: .
-          file: build/docker/Dockerfile
+          file: build/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
