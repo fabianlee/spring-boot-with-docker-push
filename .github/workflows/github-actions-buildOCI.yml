@@ -61,10 +61,10 @@ jobs:
       - name: get BUILD_VERSION out of build.gradle
         shell: bash
         run: echo BUILD_VERSION=$(grep -Po '^version = \K.*' build.gradle | tr -d "'") >> $GITHUB_ENV
-      - name: show BUILD_VERSION
+      - name: show BUILD_VERSION ${{ env.BUILD_VERSION }}
         run: echo $BUILD_VERSION
   
-      - name: Creates build/libs/springbootwithdockerpush-${{ env.BUILD_VERSION }}-SNAPSHOT.jar
+      - name: Creates build/libs/springbootwithdockerpush-${{ env.BUILD_VERSION }}.jar
         run: ./gradlew bootJar
 
       - name: Create Dockerfile at build/docker/Dockerfile referencing exact jar version
@@ -97,8 +97,10 @@ jobs:
       - name: build and push docker image
         uses: docker/build-push-action@v3.2.0
         with:
-          context: .
-          file: build/Dockerfile
+          #context: .
+          #file: build/Dockerfile
+          context: build
+          file: Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
