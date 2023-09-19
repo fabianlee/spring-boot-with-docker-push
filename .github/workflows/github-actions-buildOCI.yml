@@ -97,10 +97,8 @@ jobs:
       - name: build and push docker image
         uses: docker/build-push-action@v3.2.0
         with:
-          #context: .
-          #file: build/Dockerfile
-          context: build/libs/
-          file: build/Dockerfile
+          context: build/libs/ # location of bootJar
+          file: build/Dockerfile # location of Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
