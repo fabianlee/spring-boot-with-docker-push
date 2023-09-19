@@ -18,8 +18,8 @@ jobs:
 
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
     permissions:
-      contents: write
-      packages: writes # for OCI push
+      #contents: write
+      packages: write # for OCI push
 
     steps:
 
