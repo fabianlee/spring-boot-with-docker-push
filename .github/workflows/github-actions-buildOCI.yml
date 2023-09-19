@@ -64,7 +64,7 @@ jobs:
       - name: show BUILD_VERSION
         run: echo $BUILD_VERSION
   
-      - name: Creates build/libs/springbootwithdockerpush-${{ BUILD_VERSION }}-SNAPSHOT.jar
+      - name: Creates build/libs/springbootwithdockerpush-${{ env.BUILD_VERSION }}-SNAPSHOT.jar
         run: ./gradlew bootJar
 
       - name: Create Dockerfile at build/docker/Dockerfile referencing exact jar version
