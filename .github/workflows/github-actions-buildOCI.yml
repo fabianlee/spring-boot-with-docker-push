@@ -1,6 +1,6 @@
 name: build-oci-image
 
-run-name: Build OCI Image for GoLang binary
+run-name: Build OCI Image
 
 on:
   push:
@@ -18,8 +18,7 @@ jobs:
 
     # https://docs.github.com/en/actions/using-jobs/assigning-permissions-to-jobs
     permissions:
-      contents: read # for actions/checkout
-      packages: write # for OCI build
+      contents: write
 
     steps:
 
@@ -48,6 +47,23 @@ jobs:
           GITHUB_CONTEXT: ${{ toJson(github) }}
         run: echo "$GITHUB_CONTEXT"
 
+      # Java environment
+      - name: setup Java
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: adopt
+          cache: gradle
+  
+      - name: Validate Gradle wrapper matches official SHA-256 checksums for security
+        uses: gradle/wrapper-validation-action@v1
+  
+      - name: Creates build/libs/springbootwithdockerpush-x.y.z-SNAPSHOT.jar
+        run: ./gradlew bootJar
+
+      - name: Create Dockerfile at build/docker/Dockerfile referencing exact jar version
+        run: ./gradlew prepareDockerfileTemplate
+  
       # Github container registry credentials
       - name: Log in to the Github Container registry ${{ env.GH_REGISTRY }} as ${{ github.actor }}
         uses: docker/login-action@v2
@@ -76,11 +92,10 @@ jobs:
         uses: docker/build-push-action@v3.2.0
         with:
           context: .
-          file: src/main/resources/docker/Dockerfile
+          file: build/docker/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             MY_VERSION=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
             MY_BUILTBY=github-action
-
