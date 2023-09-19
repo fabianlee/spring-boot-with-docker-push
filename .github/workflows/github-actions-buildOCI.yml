@@ -99,7 +99,7 @@ jobs:
         with:
           #context: .
           #file: build/Dockerfile
-          context: build/
+          context: build/libs/
           file: build/Dockerfile
           push: true
           tags: ${{ steps.meta.outputs.tags }}
